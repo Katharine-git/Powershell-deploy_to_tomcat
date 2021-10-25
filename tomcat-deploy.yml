@@ -1,0 +1,22 @@
+---
+ - name: Deploy war
+   hosts: centos
+   tasks:
+     - name: Stop Tomcat
+       shell: /opt/apache-tomcat-9.0.46/bin/shutdown.sh
+
+     - name: Delete old war
+       shell: rm -rf /opt/apache-tomcat-9.0.46/webapps/
+
+     - name: download war
+       get_url:
+         url: http://localhost:8081/artifactory/webapp/#/artifacts/browse/tree/General/libs-release-local/demo-war/hello-world-war-1.0.0.war
+         dest: /opt/bamboo-home/xml-data/build-dir/DT-BT-JOB1/target/
+
+     - name: copy war
+       copy:
+         src:  /opt/bamboo-home/xml-data/build-dir/DT-BT-JOB1/target/
+         dest: /opt/apache-tomcat-9.0.46/webapps/
+
+     - name: Start Tomcat
+       shell: nohup  /opt/apache-tomcat-9.0.46/bin/startup.sh
